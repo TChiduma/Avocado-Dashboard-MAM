@@ -191,6 +191,7 @@ def collapsible_info_box(title, bullets, default_open=False):
 
 def drilldown_badge(text="● Click point to drill down"):
     return html.Div(
+        className="drilldown-badge-wrapper",
         style={
             "display": "flex",
             "justifyContent": "flex-end",
@@ -959,7 +960,12 @@ def data_layout():
     )
 
 
-app = Dash(__name__)
+app = Dash(
+    __name__,
+    meta_tags=[
+        {"name": "viewport", "content": "width=device-width, initial-scale=1.0, maximum-scale=1.0"}
+    ],
+)
 server = app.server
 
 app.layout = html.Div(
