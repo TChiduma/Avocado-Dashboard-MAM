@@ -1,0 +1,727 @@
+/* ==========================================================================
+   Avocado Dashboard - Premium Dark Theme & Filters Design System
+   ========================================================================== */
+
+:root {
+    --Dash-Fill-Interactive-Strong: #7AC74F !important;
+    --Dash-Fill-Interactive-Weak: #264027 !important;
+    --Dash-Fill-Inverse-Strong: #1C1C1C !important;
+    --Dash-Stroke-Strong: #333333 !important;
+    --Dash-Stroke-Weak: #282828 !important;
+    --Dash-Text-Strong: #FFFFFF !important;
+    --Dash-Text-Primary: #FFFFFF !important;
+    --dash-color-accent: #7AC74F !important;
+}
+
+/* --------------------------------------------------------------------------
+   1. Filter Labels (Headings above controls only - NOT dropdown option labels)
+   -------------------------------------------------------------------------- */
+label:not([class*="option"]):not([role="option"]):not(.dash-options-list-option),
+.control-label {
+    color: #CCCCCC !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    margin-bottom: 6px !important;
+    display: inline-block !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. Dropdown Inputs & Trigger Controls (Closed State)
+   -------------------------------------------------------------------------- */
+.Select,
+.Select-control,
+.dash-dropdown,
+.dash-dropdown-trigger,
+div[class*="-control"],
+div[class*="control"] {
+    background-color: #1C1C1C !important;
+    background: #1C1C1C !important;
+    border: 1px solid #333333 !important;
+    border-radius: 8px !important;
+    color: #FFFFFF !important;
+    min-height: 38px !important;
+    box-shadow: none !important;
+}
+
+.dash-dropdown:focus,
+.dash-dropdown:focus-within,
+.dash-dropdown-trigger:focus,
+.Select-control:hover,
+div[class*="-control"]:hover,
+div[class*="-control"][class*="-is-focused"] {
+    border-color: #7AC74F !important;
+    outline: none !important;
+}
+
+/* Single-select value text */
+.Select-value,
+.Select-value-label,
+.dash-dropdown-value,
+div[class*="-singleValue"],
+div[class*="singleValue"] {
+    color: #FFFFFF !important;
+    font-weight: 500 !important;
+}
+
+/* Placeholder text */
+.Select-placeholder,
+.dash-dropdown-placeholder,
+div[class*="-placeholder"],
+div[class*="placeholder"] {
+    color: #8E8E93 !important;
+}
+
+/* Multi-select selected items (compact chips inside the input box) */
+.Select--multi .Select-value,
+div[class*="-multiValue"],
+div[class*="multiValue"] {
+    background-color: #264027 !important;
+    background: #264027 !important;
+    border: 1px solid #3a5e3c !important;
+    border-radius: 4px !important;
+    color: #FFFFFF !important;
+}
+
+.Select--multi .Select-value-label,
+div[class*="-multiValue"] div,
+div[class*="multiValue"] div,
+div[class*="-multiValue"] span,
+div[class*="multiValue"] span,
+div[class*="MultiValueGeneric"] {
+    color: #FFFFFF !important;
+    font-size: 12px !important;
+}
+
+.Select--multi .Select-value-icon,
+div[class*="-MultiValueRemove"],
+div[class*="MultiValueRemove"] {
+    border-right: 1px solid #3a5e3c !important;
+    color: #A0A0A0 !important;
+    cursor: pointer !important;
+}
+
+.Select--multi .Select-value-icon:hover,
+div[class*="-MultiValueRemove"]:hover,
+div[class*="MultiValueRemove"]:hover {
+    background-color: #3a5e3c !important;
+    color: #FFFFFF !important;
+}
+
+/* Icons (Arrows, Clear) */
+.Select-arrow,
+.Select-arrow-zone,
+.Select-clear,
+.Select-clear-zone,
+.dash-dropdown-trigger-icon,
+.dash-dropdown-clear,
+div[class*="-indicatorContainer"] svg,
+div[class*="indicatorContainer"] svg {
+    color: #A0A0A0 !important;
+    fill: #A0A0A0 !important;
+}
+
+.Select-clear:hover,
+.dash-dropdown-clear:hover {
+    color: #7AC74F !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. Dropdown Open Popover & VERTICAL Scrolling List
+   -------------------------------------------------------------------------- */
+.dash-dropdown-content {
+    background-color: #1C1C1C !important;
+    border: 1px solid #333333 !important;
+    border-radius: 8px !important;
+    color: #FFFFFF !important;
+    min-width: 280px !important;
+    width: var(--radix-popover-trigger-width, 300px) !important;
+    max-width: 420px !important;
+    max-height: 380px !important;
+    overflow: hidden !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7) !important;
+    z-index: 9999 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Search bar at top of dropdown */
+.dash-dropdown-search-container,
+div[class*="search-container"] {
+    background-color: #151515 !important;
+    border: 1px solid #333333 !important;
+    border-radius: 6px !important;
+    margin: 8px 10px 6px 10px !important;
+    padding: 6px 10px !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.dash-dropdown-search-container:focus-within,
+div[class*="search-container"]:focus-within {
+    border-color: #7AC74F !important;
+    box-shadow: 0 0 0 1px #7AC74F !important;
+    outline: none !important;
+}
+
+.dash-dropdown-search,
+.Select-input > input,
+div[class*="-Input"] input,
+div[class*="Input"] input {
+    color: #FFFFFF !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    font-size: 13px !important;
+    width: 100% !important;
+}
+
+.dash-dropdown-search::placeholder {
+    color: #8E8E93 !important;
+}
+
+.dash-dropdown-search-icon,
+.dash-dropdown-search-container svg {
+    color: #7AC74F !important;
+    fill: #7AC74F !important;
+    margin-right: 6px !important;
+}
+
+/* Actions ("Select All", "Deselect All") */
+.dash-dropdown-actions {
+    padding: 6px 12px 8px 12px !important;
+    border-bottom: 1px solid #282828 !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    gap: 14px !important;
+}
+
+.dash-dropdown-action-button,
+.dash-dropdown-actions button,
+.dash-dropdown-actions a {
+    color: #7AC74F !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    padding: 2px 4px !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+}
+
+.dash-dropdown-action-button:hover,
+.dash-dropdown-actions button:hover {
+    text-decoration: underline !important;
+    color: #90d868 !important;
+}
+
+/* Options Container: strictly single-column vertical list with working scrollbar */
+.dash-options-list,
+.dash-dropdown-options,
+.dash-options-list-virtualized,
+.dash-dropdown-content div[role="listbox"],
+.dash-dropdown-content .dash-options-list,
+div[role="listbox"],
+.Select-menu-outer,
+.Select-menu,
+div[class*="-menu"],
+div[class*="-MenuList"],
+div[class*="menu"],
+div[class*="MenuList"] {
+    background-color: #1C1C1C !important;
+    border: none !important;
+    color: #FFFFFF !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    max-height: 250px !important;
+    height: auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    flex: 1 1 auto !important;
+}
+
+/* Each Option Row: flat vertical row spanning 100% width with checkbox on left, label on right */
+.dash-options-list-option,
+.dash-dropdown-option,
+.dash-dropdown-content [role="option"],
+.dash-dropdown-content label[role="option"],
+.dash-dropdown-content .dash-options-list-option,
+.dash-options-list > label,
+.dash-options-list > div,
+div[role="listbox"] > label,
+div[role="listbox"] > div,
+.Select-option,
+div[class*="-option"],
+div[class*="option"],
+label[role="option"],
+[role="option"] {
+    background-color: transparent !important;
+    color: #E5E5E5 !important;
+    border: none !important;
+    border-bottom: 1px solid #242424 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 8px 14px !important;
+    font-size: 13.5px !important;
+    font-weight: 400 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 auto !important;
+    flex-basis: 100% !important;
+    box-sizing: border-box !important;
+    gap: 12px !important;
+    text-align: left !important;
+    white-space: normal !important;
+    transition: background-color 0.12s ease, color 0.12s ease !important;
+}
+
+.dash-options-list-option:last-child,
+.dash-dropdown-option:last-child,
+.Select-option:last-child,
+[role="option"]:last-child {
+    border-bottom: none !important;
+}
+
+/* Reset margin on labels inside options or dropdown content */
+.dash-dropdown-content label,
+.dash-options-list label,
+.dash-dropdown-options label,
+div[role="listbox"] label,
+label[role="option"],
+.dash-options-list-option label {
+    margin-bottom: 0 !important;
+}
+
+/* Checkbox styling */
+.dash-options-list-option input[type="checkbox"],
+.dash-dropdown-option input[type="checkbox"],
+.dash-dropdown-content input[type="checkbox"],
+[role="option"] input[type="checkbox"],
+.dash-dropdown-option-checkbox {
+    accent-color: #7AC74F !important;
+    cursor: pointer !important;
+    margin: 0 !important;
+    width: 16px !important;
+    height: 16px !important;
+    flex-shrink: 0 !important;
+}
+
+/* Custom checkbox elements inside Dash dropdown */
+.dash-options-list-option [class*="checkbox"],
+.dash-dropdown-option [class*="checkbox"],
+[role="option"] [class*="checkbox"] {
+    accent-color: #7AC74F !important;
+    border-color: #555555 !important;
+}
+
+.dash-options-list-option label,
+.dash-options-list-option span,
+.dash-options-list-option div,
+.dash-dropdown-option label,
+.dash-dropdown-option span,
+.dash-dropdown-option div,
+[role="option"] label,
+[role="option"] span,
+[role="option"] div {
+    margin: 0 !important;
+    cursor: pointer !important;
+    color: inherit !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 13.5px !important;
+    font-weight: 400 !important;
+}
+
+/* Option Row Hover & Focus */
+.dash-options-list-option:hover,
+.dash-options-list-option[data-highlighted],
+.dash-options-list-option:focus,
+.dash-dropdown-option:hover,
+.dash-dropdown-option[data-highlighted],
+.dash-dropdown-option:focus,
+[role="option"]:hover,
+[role="option"][data-highlighted],
+[role="option"]:focus,
+.Select-option:hover,
+.Select-option.is-focused,
+div[class*="-option"]:hover,
+div[class*="-option"][class*="-is-focused"] {
+    background-color: #264027 !important;
+    color: #7AC74F !important;
+}
+
+/* Highlight checked option */
+.dash-options-list-option:has(input:checked),
+.dash-dropdown-option:has(input:checked),
+[role="option"]:has(input:checked),
+.dash-options-list-option[aria-selected="true"],
+.dash-dropdown-option[aria-selected="true"],
+[role="option"][aria-selected="true"] {
+    background-color: rgba(122, 199, 79, 0.15) !important;
+    color: #7AC74F !important;
+    font-weight: 500 !important;
+}
+
+/* Scrollbar for dropdown options list */
+.dash-options-list::-webkit-scrollbar,
+.dash-dropdown-options::-webkit-scrollbar,
+.dash-dropdown-content::-webkit-scrollbar,
+.Select-menu::-webkit-scrollbar,
+div[role="listbox"]::-webkit-scrollbar {
+    width: 6px !important;
+}
+
+.dash-options-list::-webkit-scrollbar-track,
+.dash-dropdown-options::-webkit-scrollbar-track,
+.dash-dropdown-content::-webkit-scrollbar-track,
+.Select-menu::-webkit-scrollbar-track,
+div[role="listbox"]::-webkit-scrollbar-track {
+    background: #151515 !important;
+}
+
+.dash-options-list::-webkit-scrollbar-thumb,
+.dash-dropdown-options::-webkit-scrollbar-thumb,
+.dash-dropdown-content::-webkit-scrollbar-thumb,
+.Select-menu::-webkit-scrollbar-thumb,
+div[role="listbox"]::-webkit-scrollbar-thumb {
+    background: #444444 !important;
+    border-radius: 3px !important;
+}
+
+.dash-options-list::-webkit-scrollbar-thumb:hover,
+.dash-dropdown-options::-webkit-scrollbar-thumb:hover,
+.dash-dropdown-content::-webkit-scrollbar-thumb:hover,
+div[role="listbox"]::-webkit-scrollbar-thumb:hover {
+    background: #7AC74F !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. DatePickerRange (Full Dark Theme & Range Highlighting)
+   -------------------------------------------------------------------------- */
+.dash-datepicker,
+.dash-datepicker-input-wrapper,
+.DateRangePicker,
+.DateRangePickerInput,
+.DateRangePickerInput__withBorder,
+.DateInput,
+.DateInput_input,
+.SingleDatePickerInput {
+    background-color: #1C1C1C !important;
+    background: #1C1C1C !important;
+    color: #FFFFFF !important;
+    border-color: #333333 !important;
+}
+
+.DateRangePickerInput,
+.dash-datepicker-input-wrapper {
+    border: 1px solid #333333 !important;
+    border-radius: 8px !important;
+}
+
+.DateInput {
+    border-radius: 8px !important;
+}
+
+.DateInput_input,
+.dash-datepicker-input {
+    background-color: #1C1C1C !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+}
+
+.DateInput_input::placeholder,
+.dash-datepicker-input::placeholder {
+    color: #8E8E93 !important;
+}
+
+.DateRangePickerInput_arrow,
+.dash-datepicker-range-arrow {
+    color: #7AC74F !important;
+    fill: #7AC74F !important;
+}
+
+.DateRangePickerInput_arrow svg {
+    fill: #7AC74F !important;
+}
+
+.dash-datepicker-caret-icon,
+.dash-datepicker-clear,
+.DateRangePickerInput_clearDates {
+    color: #A0A0A0 !important;
+    fill: #A0A0A0 !important;
+}
+
+/* Calendar Popup Window */
+.dash-datepicker-content,
+.dash-datepicker-calendar-wrapper,
+.dash-datepicker-calendar,
+.CalendarMonthGrid,
+.CalendarMonth,
+.DayPicker {
+    background-color: #1C1C1C !important;
+    background: #1C1C1C !important;
+    color: #FFFFFF !important;
+    border-radius: 8px !important;
+    border: 1px solid #333333 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Month & Year Controls Bar */
+.dash-datepicker-controls,
+.DayPickerNavigation {
+    background-color: #151515 !important;
+    border-bottom: 1px solid #333333 !important;
+    padding: 6px 10px !important;
+}
+
+.dash-datepicker-controls button,
+.dash-datepicker-controls input,
+.dash-datepicker-controls select,
+.dash-datepicker-month-nav,
+.dash-datepicker-year-nav,
+.DayPickerNavigation_button {
+    background-color: #1C1C1C !important;
+    color: #FFFFFF !important;
+    border: 1px solid #333333 !important;
+    border-radius: 4px !important;
+}
+
+.dash-datepicker-controls button:hover,
+.DayPickerNavigation_button:hover {
+    background-color: #264027 !important;
+    color: #7AC74F !important;
+    border-color: #7AC74F !important;
+}
+
+/* Month Titles ("December 2016", "January 2017") */
+.dash-datepicker-calendar-month-header,
+.dash-datepicker-calendar caption,
+.dash-datepicker-calendar h2,
+.dash-datepicker-calendar .dash-datepicker-month-title,
+.dash-datepicker-calendar div[class*="month"],
+.dash-datepicker-calendar-header,
+.CalendarMonth_caption {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    font-size: 15px !important;
+}
+
+/* Day of Week Headers ("Su Mo Tu We Th Fr Sa") */
+.dash-datepicker-calendar th,
+.dash-datepicker-calendar th span,
+.dash-datepicker-calendar th div,
+.DayPicker_weekHeader,
+.DayPicker_weekHeader small {
+    color: #7AC74F !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+}
+
+/* Calendar Date Cells */
+.dash-datepicker-calendar td,
+.dash-datepicker-calendar-date,
+.dash-datepicker-calendar-date-inside,
+.CalendarDay__default {
+    background-color: #1C1C1C !important;
+    color: #FFFFFF !important;
+    border: 1px solid #282828 !important;
+    font-weight: 500 !important;
+    transition: background-color 0.12s ease !important;
+}
+
+/* Date Range Hover & In-Range Highlighting */
+.dash-datepicker-calendar-date-inside:hover,
+.dash-datepicker-calendar td:hover,
+.dash-datepicker-calendar [data-range-hover="true"],
+.dash-datepicker-calendar [data-in-range="true"],
+.dash-datepicker-calendar .dash-datepicker-calendar-date-range,
+.dash-datepicker-calendar .dash-datepicker-calendar-date-highlighted,
+.CalendarDay__hovered_span,
+.CalendarDay__selected_span {
+    background-color: #264027 !important;
+    color: #7AC74F !important;
+    border-color: #3a5e3c !important;
+}
+
+/* Selected Start & End Dates */
+.dash-datepicker-calendar-date-selected,
+.dash-datepicker-calendar [data-selected="true"],
+.dash-datepicker-calendar .dash-datepicker-calendar-date-start,
+.dash-datepicker-calendar .dash-datepicker-calendar-date-end,
+.CalendarDay__selected {
+    background-color: #7AC74F !important;
+    color: #0E0E0E !important;
+    font-weight: 700 !important;
+    border-color: #7AC74F !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. Sliders (Marks, Rails, Tooltips)
+   -------------------------------------------------------------------------- */
+.dash-slider-container {
+    padding: 10px 12px 24px 12px !important;
+}
+
+.rc-slider-mark-text,
+.rc-slider-mark-text-active,
+.dash-slider-mark,
+.dash-slider-mark span,
+.dash-slider-mark div,
+.dash-slider-mark-outside-selection {
+    color: #FFFFFF !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    opacity: 1 !important;
+}
+
+.rc-slider-rail,
+.dash-slider-track {
+    background-color: #333333 !important;
+    height: 6px !important;
+    border-radius: 3px !important;
+}
+
+.rc-slider-track,
+.dash-slider-range {
+    background-color: #7AC74F !important;
+    height: 6px !important;
+    border-radius: 3px !important;
+}
+
+.rc-slider-dot,
+.dash-slider-dot {
+    border-color: #7AC74F !important;
+    background-color: #1C1C1C !important;
+}
+
+.rc-slider-handle,
+.dash-slider-thumb {
+    border: 2px solid #FFFFFF !important;
+    background-color: #7AC74F !important;
+    box-shadow: 0 0 8px rgba(122, 199, 79, 0.6) !important;
+}
+
+.rc-slider-tooltip-inner,
+.dash-slider-tooltip {
+    background-color: #1C1C1C !important;
+    color: #FFFFFF !important;
+    border: 1px solid #333333 !important;
+    border-radius: 4px !important;
+    padding: 4px 8px !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. Premium Embellishments & Micro-Animations
+   -------------------------------------------------------------------------- */
+.kpi-card {
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease !important;
+}
+
+.kpi-card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5), 0 0 16px rgba(122, 199, 79, 0.2) !important;
+    border-color: #7AC74F !important;
+}
+
+.dash-graph {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+
+/* Navbar Link Hover Micro-Animations */
+#navbar a {
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease !important;
+}
+
+#navbar a:hover {
+    color: #7AC74F !important;
+    background-color: rgba(122, 199, 79, 0.12) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Page Header Status Badge */
+.status-badge {
+    color: #7AC74F !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    background-color: rgba(122, 199, 79, 0.1) !important;
+    border: 1px solid rgba(122, 199, 79, 0.25) !important;
+    padding: 4px 12px !important;
+    border-radius: 12px !important;
+    display: inline-block !important;
+    margin-bottom: 8px !important;
+    letter-spacing: 0.2px !important;
+}
+
+/* Export Button Hover */
+#btn-download-csv:hover {
+    background-color: #7AC74F !important;
+    color: #0E0E0E !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 14px rgba(122, 199, 79, 0.35) !important;
+}
+
+/* Collapsible Page Info Box */
+details.page-info-box {
+    background-color: #1C1C1C !important;
+    border: 1px solid #333333 !important;
+    border-radius: 12px !important;
+    padding: 10px 16px !important;
+    margin-bottom: 22px !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+details.page-info-box[open] {
+    border-color: rgba(122, 199, 79, 0.45) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35) !important;
+}
+
+details.page-info-box summary {
+    cursor: pointer !important;
+    outline: none !important;
+    list-style: none !important;
+    color: #7AC74F !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    user-select: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+details.page-info-box summary::-webkit-details-marker {
+    display: none !important;
+}
+
+details.page-info-box .toggle-icon {
+    transition: transform 0.2s ease !important;
+    display: inline-block !important;
+    color: #7AC74F !important;
+    font-size: 12px !important;
+}
+
+details.page-info-box[open] .toggle-icon {
+    transform: rotate(90deg) !important;
+}
+

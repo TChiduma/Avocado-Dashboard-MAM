@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <!-- Skin gradient -->
+    <linearGradient id="skinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4B8324"/>
+      <stop offset="100%" stop-color="#284B12"/>
+    </linearGradient>
+
+    <!-- Flesh gradient -->
+    <linearGradient id="fleshGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#C5E26D"/>
+      <stop offset="60%" stop-color="#A9D348"/>
+      <stop offset="100%" stop-color="#8DBF2C"/>
+    </linearGradient>
+
+    <!-- Pit gradient -->
+    <radialGradient id="pitGrad" cx="38%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#A26228"/>
+      <stop offset="45%" stop-color="#733F14"/>
+      <stop offset="100%" stop-color="#462208"/>
+    </radialGradient>
+
+    <!-- Pit gloss shine -->
+    <linearGradient id="pitShine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <style>
+    @keyframes waveArm {
+      0%   { transform: rotate(0deg); }
+      15%  { transform: rotate(-28deg); }
+      30%  { transform: rotate(18deg); }
+      45%  { transform: rotate(-24deg); }
+      60%  { transform: rotate(14deg); }
+      75%  { transform: rotate(-10deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    @keyframes gentleBounce {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50%      { transform: translateY(-2px) rotate(0.8deg); }
+    }
+
+    @keyframes blinkEyes {
+      0%, 88%, 94%, 100% { transform: scaleY(1); }
+      91%                { transform: scaleY(0.08); }
+    }
+
+    .mascot-container {
+      transform-origin: 50px 95px;
+      animation: gentleBounce 2.6s ease-in-out infinite;
+    }
+
+    .waving-arm-group {
+      transform-origin: 71px 48px;
+      animation: waveArm 2.4s ease-in-out infinite;
+    }
+
+    .blinking-eyes {
+      transform-origin: 50px 41px;
+      animation: blinkEyes 3.8s ease-in-out infinite;
+    }
+  </style>
+
+  <g class="mascot-container">
+    <!-- Little Feet -->
+    <ellipse cx="40" cy="94" rx="6.5" ry="4" fill="#224010"/>
+    <ellipse cx="60" cy="94" rx="6.5" ry="4" fill="#224010"/>
+
+    <!-- Left Arm (Resting cutely on hip) -->
+    <path d="M 27 50 C 18 54 15 63 21 68 C 24 70 27 66 28 62 C 30 57 29 52 27 50 Z" 
+          fill="#3E6F1D" stroke="#224010" stroke-width="1.2" stroke-linejoin="round"/>
+
+    <!-- Outer Avocado Skin -->
+    <path d="M 50 14 
+             C 65 14, 72 26, 73 40 
+             C 74 52, 81 63, 81 74 
+             C 81 88, 68 96, 50 96 
+             C 32 96, 19 88, 19 74 
+             C 19 63, 26 52, 27 40 
+             C 28 26, 35 14, 50 14 Z" 
+          fill="url(#skinGrad)" 
+          stroke="#1B320C" 
+          stroke-width="2"/>
+
+    <!-- Inner Light Green Flesh -->
+    <path d="M 50 19 
+             C 62 19, 67 29, 68 41 
+             C 69 52, 75 61, 75 71 
+             C 75 83, 64 91, 50 91 
+             C 36 91, 25 83, 25 71 
+             C 25 61, 31 52, 32 41 
+             C 33 29, 38 19, 50 19 Z" 
+          fill="url(#fleshGrad)"/>
+
+    <!-- Large Cute Seed / Pit in Belly -->
+    <ellipse cx="50" cy="69" rx="17" ry="19" fill="url(#pitGrad)" stroke="#301504" stroke-width="1.2"/>
+    <!-- Pit Gloss Shine -->
+    <path d="M 40 57 C 45 54, 52 54, 57 58 C 55 60, 48 58, 41 62 Z" fill="url(#pitShine)"/>
+
+    <!-- Cute Rosy Blush Cheeks -->
+    <ellipse cx="36" cy="46" rx="4.5" ry="2.6" fill="#FF7B89" opacity="0.75"/>
+    <ellipse cx="64" cy="46" rx="4.5" ry="2.6" fill="#FF7B89" opacity="0.75"/>
+
+    <!-- Blinking Eyes Group -->
+    <g class="blinking-eyes">
+      <!-- Left Eye -->
+      <circle cx="41" cy="41" r="3.6" fill="#1A1C18"/>
+      <circle cx="39.8" cy="39.6" r="1.3" fill="#FFFFFF"/>
+      <circle cx="42.4" cy="42.3" r="0.6" fill="#FFFFFF"/>
+
+      <!-- Right Eye -->
+      <circle cx="59" cy="41" r="3.6" fill="#1A1C18"/>
+      <circle cx="57.8" cy="39.6" r="1.3" fill="#FFFFFF"/>
+      <circle cx="60.4" cy="42.3" r="0.6" fill="#FFFFFF"/>
+    </g>
+
+    <!-- Happy Smiling Mouth -->
+    <path d="M 46 45 Q 50 51 54 45" fill="#A82835" stroke="#1A1C18" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M 48 47.5 Q 50 49.5 52 47.5" fill="#FF94A2"/>
+
+    <!-- Waving Right Arm (Animated) -->
+    <g class="waving-arm-group">
+      <!-- Arm Stem -->
+      <path d="M 71 47 
+               C 76 43, 83 34, 86 23 
+               C 88 20, 92 21, 91 25 
+               C 87 36, 80 47, 73 52 Z" 
+            fill="#3E6F1D" 
+            stroke="#224010" 
+            stroke-width="1.2" 
+            stroke-linejoin="round"/>
+      <!-- Cute Rounded Hand Mitt with thumb -->
+      <circle cx="88.5" cy="22.5" r="4.2" fill="#4B8324" stroke="#224010" stroke-width="1.2"/>
+      <ellipse cx="85.5" cy="25" rx="2" ry="1.4" fill="#4B8324" transform="rotate(-30 85.5 25)"/>
+    </g>
+  </g>
+</svg>
