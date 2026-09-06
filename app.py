@@ -1,4 +1,4 @@
-from dash import Dash, dcc, html, Input, Output, State
+from dash import Dash, dcc, html, Input, Output, State, callback_context
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
@@ -184,6 +184,34 @@ def collapsible_info_box(title, bullets, default_open=False):
                     "lineHeight": "1.65",
                 },
                 children=[html.Li(bullet) for bullet in bullets],
+            ),
+        ],
+    )
+
+
+def drilldown_badge(text="● Click point to drill down"):
+    return html.Div(
+        style={
+            "display": "flex",
+            "justifyContent": "flex-end",
+            "marginBottom": "-36px",
+            "position": "relative",
+            "zIndex": 8,
+            "paddingRight": "18px",
+            "pointerEvents": "none",
+        },
+        children=[
+            html.Span(
+                text,
+                className="status-badge",
+                style={
+                    "fontSize": "11px",
+                    "padding": "3px 10px",
+                    "margin": 0,
+                    "backgroundColor": "rgba(122, 199, 79, 0.14)",
+                    "border": "1px solid rgba(122, 199, 79, 0.35)",
+                    "boxShadow": "0 2px 10px rgba(0,0,0,0.3)",
+                },
             ),
         ],
     )
@@ -384,6 +412,7 @@ def overview_layout():
                     html.Div(
                         style={"flex": "1 1 400px"},
                         children=[
+                            drilldown_badge(),
                             dcc.Loading(
                                 dcc.Graph(
                                     id="price-over-time",
@@ -391,12 +420,13 @@ def overview_layout():
                                 ),
                                 type="dot",
                                 color=COLORS["accent"],
-                            )
+                            ),
                         ],
                     ),
                     html.Div(
                         style={"flex": "1 1 400px"},
                         children=[
+                            drilldown_badge(),
                             dcc.Loading(
                                 dcc.Graph(
                                     id="volume-over-time",
@@ -404,11 +434,17 @@ def overview_layout():
                                 ),
                                 type="dot",
                                 color=COLORS["accent"],
-                            )
+                            ),
                         ],
                     ),
                 ],
             ),
+            dcc.Loading(
+                html.Div(id="overview-drilldown-container"),
+                type="dot",
+                color=COLORS["accent"],
+            ),
+            dcc.Store(id="overview-selected-week", data=None),
         ],
     )
 
@@ -598,6 +634,7 @@ def trends_layout():
                     html.Div(
                         style={"flex": "1 1 400px"},
                         children=[
+                            drilldown_badge(),
                             dcc.Loading(
                                 dcc.Graph(
                                     id="rolling-chart",
@@ -605,12 +642,13 @@ def trends_layout():
                                 ),
                                 type="dot",
                                 color=COLORS["accent"],
-                            )
+                            ),
                         ],
                     ),
                     html.Div(
                         style={"flex": "1 1 400px"},
                         children=[
+                            drilldown_badge(),
                             dcc.Loading(
                                 dcc.Graph(
                                     id="volatility-chart",
@@ -618,11 +656,17 @@ def trends_layout():
                                 ),
                                 type="dot",
                                 color=COLORS["accent"],
-                            )
+                            ),
                         ],
                     ),
                 ],
             ),
+            dcc.Loading(
+                html.Div(id="trends-drilldown-container"),
+                type="dot",
+                color=COLORS["accent"],
+            ),
+            dcc.Store(id="trends-selected-week", data=None),
         ],
     )
 
@@ -750,6 +794,7 @@ def comparison_layout():
                     html.Div(
                         style={"flex": "1 1 400px"},
                         children=[
+                            drilldown_badge(),
                             dcc.Loading(
                                 dcc.Graph(
                                     id="comp-price-chart",
@@ -757,12 +802,13 @@ def comparison_layout():
                                 ),
                                 type="dot",
                                 color=COLORS["accent"],
-                            )
+                            ),
                         ],
                     ),
                     html.Div(
                         style={"flex": "1 1 400px"},
                         children=[
+                            drilldown_badge(),
                             dcc.Loading(
                                 dcc.Graph(
                                     id="comp-volume-chart",
@@ -770,11 +816,17 @@ def comparison_layout():
                                 ),
                                 type="dot",
                                 color=COLORS["accent"],
-                            )
+                            ),
                         ],
                     ),
                 ],
             ),
+            dcc.Loading(
+                html.Div(id="comp-drilldown-container"),
+                type="dot",
+                color=COLORS["accent"],
+            ),
+            dcc.Store(id="comp-selected-week", data=None),
         ],
     )
 
@@ -1004,7 +1056,9 @@ def update_overview(start_date, end_date, regions, types):
         color_discrete_sequence=AVOCADO_COLORS,
     )
     fig.update_traces(
-        hovertemplate="<b>%{x|%b %d, %Y}</b><br>Avg Price: <b>$%{y:.2f}</b><extra>%{fullData.name}</extra>"
+        mode="lines+markers",
+        marker=dict(size=4),
+        hovertemplate="<b>%{x|%b %d, %Y}</b><br>Avg Price: <b>$%{y:.2f}</b><br><span style='font-size:11px;color:#7AC74F'>👆 Click point to inspect week</span><extra>%{fullData.name}</extra>",
     )
     apply_fig_theme(fig, title="Average price over time")
 
@@ -1024,7 +1078,9 @@ def update_overview(start_date, end_date, regions, types):
         color_discrete_sequence=AVOCADO_COLORS,
     )
     fig_vol.update_traces(
-        hovertemplate="<b>%{x|%b %d, %Y}</b><br>Total Volume: <b>%{y:,.0f} units</b><extra>%{fullData.name}</extra>"
+        mode="lines+markers",
+        marker=dict(size=4),
+        hovertemplate="<b>%{x|%b %d, %Y}</b><br>Total Volume: <b>%{y:,.0f} units</b><br><span style='font-size:11px;color:#7AC74F'>👆 Click point to inspect week</span><extra>%{fullData.name}</extra>",
     )
     apply_fig_theme(fig_vol, title="Total volume over time")
 
@@ -1100,6 +1156,318 @@ def update_overview(start_date, end_date, regions, types):
     ]
 
     return fig, fig_vol, kpis
+
+
+@app.callback(
+    Output("overview-selected-week", "data"),
+    [
+        Input("price-over-time", "clickData"),
+        Input("volume-over-time", "clickData"),
+    ],
+    prevent_initial_call=True,
+)
+def store_overview_selected_week(price_click, vol_click):
+    try:
+        trig_id = callback_context.triggered[0]["prop_id"].split(".")[0] if callback_context.triggered else None
+    except Exception:
+        trig_id = None
+    click_data = price_click if trig_id == "price-over-time" else (vol_click if trig_id == "volume-over-time" else (price_click or vol_click))
+    if not click_data or not click_data.get("points"):
+        return None
+    point = click_data["points"][0]
+    clicked_raw = point.get("x")
+    if not clicked_raw:
+        return None
+    return str(clicked_raw)[:10]
+
+
+@app.callback(
+    Output("overview-drilldown-container", "children"),
+    [
+        Input("overview-selected-week", "data"),
+        Input("region-dropdown", "value"),
+        Input("type-checklist", "value"),
+        Input("date-range", "start_date"),
+        Input("date-range", "end_date"),
+    ],
+)
+def update_overview_drilldown(selected_week, regions, types, start_date, end_date):
+    if not selected_week:
+        return html.Div(
+            style={
+                "backgroundColor": COLORS["card"],
+                "border": f"1px dashed {COLORS['border']}",
+                "borderRadius": "16px",
+                "padding": "24px 28px",
+                "textAlign": "center",
+                "marginTop": "24px",
+            },
+            children=[
+                html.Div("👆", style={"fontSize": "26px", "marginBottom": "6px"}),
+                html.Div(
+                    "Interactive Weekly Market Breakdown",
+                    style={"color": COLORS["accent"], "fontWeight": "700", "fontSize": "16px", "marginBottom": "4px"},
+                ),
+                html.Div(
+                    "Click on any data point along the price or volume trend lines above to inspect a detailed market-by-market volume & price breakdown for that exact week.",
+                    style={"color": COLORS["muted"], "fontSize": "13px"},
+                ),
+            ],
+        )
+
+    date_str = str(selected_week)[:10]
+    try:
+        target_date = pd.to_datetime(date_str)
+    except Exception:
+        return html.Div("Invalid date.")
+
+    if (start_date and target_date < pd.to_datetime(start_date)) or (end_date and target_date > pd.to_datetime(end_date)):
+        return html.Div(
+            style={
+                "backgroundColor": COLORS["card"],
+                "border": f"1px dashed {COLORS['border']}",
+                "borderRadius": "16px",
+                "padding": "24px 28px",
+                "textAlign": "center",
+                "marginTop": "24px",
+            },
+            children=[
+                html.Div("📅", style={"fontSize": "26px", "marginBottom": "6px"}),
+                html.Div(
+                    f"Selected week ({date_str}) is outside current date filters",
+                    style={"color": COLORS["accent"], "fontWeight": "700", "fontSize": "16px", "marginBottom": "4px"},
+                ),
+                html.Div(
+                    "Widen your date filter range or click a data point on the chart above to inspect a new week.",
+                    style={"color": COLORS["muted"], "fontSize": "13px"},
+                ),
+            ],
+        )
+
+    week_df = df[df["date"] == target_date]
+    if regions:
+        week_df = week_df[week_df["region"].isin(regions)]
+    if types:
+        week_df = week_df[week_df["type"].isin(types)]
+
+    if week_df.empty:
+        return html.Div(
+            style={"padding": "20px", "textAlign": "center", "color": COLORS["muted"]},
+            children=f"No matching regional records found for the week of {date_str} with the current filter selection.",
+        )
+
+    date_formatted = target_date.strftime("%B %d, %Y")
+    total_vol = week_df["total_volume"].sum()
+    avg_price = week_df["average_price"].mean()
+    n_markets = week_df["region"].nunique()
+
+    # 1. Top 10 regions by volume
+    vol_by_reg = (
+        week_df.groupby("region")["total_volume"]
+        .sum()
+        .reset_index()
+        .sort_values("total_volume", ascending=False)
+        .head(10)
+        .sort_values("total_volume", ascending=True)
+    )
+    vol_by_reg["vol_formatted"] = vol_by_reg["total_volume"].map(format_number)
+
+    fig_bar_vol = px.bar(
+        vol_by_reg,
+        x="total_volume",
+        y="region",
+        orientation="h",
+        text="vol_formatted",
+        labels={"total_volume": "Total Volume", "region": "Market"},
+        color_discrete_sequence=[COLORS["accent"]],
+    )
+    fig_bar_vol.update_traces(
+        textposition="inside",
+        insidetextanchor="middle",
+        textfont=dict(color="#0E0E0E", size=12, family="'Quicksand', sans-serif"),
+        marker=dict(line=dict(width=1, color="#121212")),
+        hovertemplate="<b>%{y}</b><br>Volume: %{x:,.0f} units (%{text})<extra></extra>",
+    )
+    apply_fig_theme(fig_bar_vol, title="Top 10 Markets by Volume")
+    fig_bar_vol.update_layout(height=360, margin=dict(l=10, r=20, t=50, b=30), xaxis_title="", yaxis_title="")
+
+    # 2. Top 10 regions by price
+    price_by_reg = (
+        week_df.groupby("region")["average_price"]
+        .mean()
+        .reset_index()
+        .sort_values("average_price", ascending=False)
+        .head(10)
+        .sort_values("average_price", ascending=True)
+    )
+    price_by_reg["price_formatted"] = price_by_reg["average_price"].map(lambda p: f"${p:.2f}")
+
+    fig_bar_price = px.bar(
+        price_by_reg,
+        x="average_price",
+        y="region",
+        orientation="h",
+        text="price_formatted",
+        labels={"average_price": "Average Price", "region": "Market"},
+        color_discrete_sequence=["#D4A373"],
+    )
+    fig_bar_price.update_traces(
+        textposition="inside",
+        insidetextanchor="middle",
+        textfont=dict(color="#0E0E0E", size=12, family="'Quicksand', sans-serif"),
+        marker=dict(line=dict(width=1, color="#121212")),
+        hovertemplate="<b>%{y}</b><br>Avg Price: $%{x:.2f}<extra></extra>",
+    )
+    apply_fig_theme(fig_bar_price, title="Top 10 Markets by Average Price")
+    fig_bar_price.update_layout(height=360, margin=dict(l=10, r=20, t=50, b=30), xaxis_title="", yaxis_title="")
+
+    top_vol_reg = vol_by_reg.iloc[-1]["region"]
+    top_price_reg = price_by_reg.iloc[-1]["region"]
+
+    return html.Div(
+        style={
+            "backgroundColor": COLORS["card"],
+            "borderRadius": "18px",
+            "border": f"1px solid {COLORS['accent']}",
+            "padding": "24px",
+            "marginTop": "24px",
+            "boxShadow": "0 8px 30px rgba(0,0,0,0.35)",
+        },
+        children=[
+            html.Div(
+                style={
+                    "display": "flex",
+                    "justifyContent": "space-between",
+                    "alignItems": "flex-start",
+                    "flexWrap": "wrap",
+                    "gap": "12px",
+                    "marginBottom": "18px",
+                    "borderBottom": f"1px solid {COLORS['border']}",
+                    "paddingBottom": "14px",
+                },
+                children=[
+                    html.Div(
+                        children=[
+                            html.Div(
+                                style={"display": "flex", "alignItems": "center", "gap": "8px"},
+                                children=[
+                                    html.Span("📅", style={"fontSize": "20px"}),
+                                    html.H3(
+                                        "Weekly Market Breakdown",
+                                        style={
+                                            "color": COLORS["accent"],
+                                            "margin": 0,
+                                            "fontWeight": "800",
+                                            "fontSize": "19px",
+                                        },
+                                    ),
+                                    html.Span(f"● Week of {date_formatted}", className="status-badge", style={"fontSize": "11px", "padding": "3px 10px"}),
+                                ],
+                            ),
+                            html.P(
+                                f"Regional price and volume distributions across {n_markets} reporting markets for sales commencing {date_formatted}.",
+                                style={"color": COLORS["muted"], "margin": "4px 0 0 0", "fontSize": "12.5px"},
+                            ),
+                        ],
+                    ),
+                    html.Span(
+                        "💡 Click any other date point above to change the breakdown week",
+                        style={
+                            "color": COLORS["muted"],
+                            "fontSize": "11.5px",
+                            "fontStyle": "italic",
+                            "alignSelf": "center",
+                        },
+                    ),
+                ],
+            ),
+            html.Div(
+                style={
+                    "display": "flex",
+                    "flexWrap": "wrap",
+                    "gap": "14px",
+                    "marginBottom": "20px",
+                },
+                children=[
+                    html.Div(
+                        style={
+                            "backgroundColor": "rgba(255,255,255,0.03)",
+                            "border": f"1px solid {COLORS['border']}",
+                            "borderRadius": "12px",
+                            "padding": "10px 16px",
+                            "flex": "1 1 160px",
+                        },
+                        children=[
+                            html.Div("TOTAL WEEKLY VOLUME", style={"color": COLORS["muted"], "fontSize": "10px", "fontWeight": "700"}),
+                            html.Div(f"{format_number(total_vol)} units", style={"color": COLORS["text"], "fontSize": "18px", "fontWeight": "700", "marginTop": "2px"}),
+                        ],
+                    ),
+                    html.Div(
+                        style={
+                            "backgroundColor": "rgba(255,255,255,0.03)",
+                            "border": f"1px solid {COLORS['border']}",
+                            "borderRadius": "12px",
+                            "padding": "10px 16px",
+                            "flex": "1 1 160px",
+                        },
+                        children=[
+                            html.Div("NATIONAL AVERAGE PRICE", style={"color": COLORS["muted"], "fontSize": "10px", "fontWeight": "700"}),
+                            html.Div(f"${avg_price:.2f}", style={"color": COLORS["accent"], "fontSize": "18px", "fontWeight": "700", "marginTop": "2px"}),
+                        ],
+                    ),
+                    html.Div(
+                        style={
+                            "backgroundColor": "rgba(255,255,255,0.03)",
+                            "border": f"1px solid {COLORS['border']}",
+                            "borderRadius": "12px",
+                            "padding": "10px 16px",
+                            "flex": "1 1 160px",
+                        },
+                        children=[
+                            html.Div("TOP VOLUME MARKET", style={"color": COLORS["muted"], "fontSize": "10px", "fontWeight": "700"}),
+                            html.Div(top_vol_reg, style={"color": COLORS["text"], "fontSize": "16px", "fontWeight": "700", "marginTop": "2px"}),
+                        ],
+                    ),
+                    html.Div(
+                        style={
+                            "backgroundColor": "rgba(255,255,255,0.03)",
+                            "border": f"1px solid {COLORS['border']}",
+                            "borderRadius": "12px",
+                            "padding": "10px 16px",
+                            "flex": "1 1 160px",
+                        },
+                        children=[
+                            html.Div("HIGHEST PRICED MARKET", style={"color": COLORS["muted"], "fontSize": "10px", "fontWeight": "700"}),
+                            html.Div(top_price_reg, style={"color": COLORS["text"], "fontSize": "16px", "fontWeight": "700", "marginTop": "2px"}),
+                        ],
+                    ),
+                ],
+            ),
+            html.Div(
+                style={
+                    "display": "flex",
+                    "flexWrap": "wrap",
+                    "gap": "20px",
+                },
+                children=[
+                    html.Div(
+                        style={"flex": "1 1 450px"},
+                        children=[
+                            drilldown_badge(f"● Week of {date_formatted}"),
+                            dcc.Graph(figure=fig_bar_vol, config={"displayModeBar": False}),
+                        ],
+                    ),
+                    html.Div(
+                        style={"flex": "1 1 450px"},
+                        children=[
+                            drilldown_badge(f"● Week of {date_formatted}"),
+                            dcc.Graph(figure=fig_bar_price, config={"displayModeBar": False}),
+                        ],
+                    ),
+                ],
+            ),
+        ],
+    )
 
 
 @app.callback(
@@ -1211,7 +1579,9 @@ def update_trends(start_date, end_date, types, window):
         color_discrete_sequence=AVOCADO_COLORS,
     )
     fig_rolling.update_traces(
-        hovertemplate="<b>%{x|%b %d, %Y}</b><br>Rolling Avg Price: <b>$%{y:.2f}</b><extra>%{fullData.name}</extra>"
+        mode="lines+markers",
+        marker=dict(size=4),
+        hovertemplate="<b>%{x|%b %d, %Y}</b><br>Rolling Avg Price: <b>$%{y:.2f}</b><br><span style='font-size:11px;color:#7AC74F'>👆 Click point to inspect week</span><extra>%{fullData.name}</extra>",
     )
     apply_fig_theme(fig_rolling, title=f"Rolling average price ({window}-day window)")
 
@@ -1232,11 +1602,332 @@ def update_trends(start_date, end_date, types, window):
         color_discrete_sequence=AVOCADO_COLORS,
     )
     fig_vol.update_traces(
-        hovertemplate="<b>%{x|%b %d, %Y}</b><br>Daily Volatility (Std): <b>$%{y:.3f}</b><extra>%{fullData.name}</extra>"
+        mode="lines+markers",
+        marker=dict(size=4),
+        hovertemplate="<b>%{x|%b %d, %Y}</b><br>Daily Volatility (Std): <b>$%{y:.3f}</b><br><span style='font-size:11px;color:#7AC74F'>👆 Click point to inspect week</span><extra>%{fullData.name}</extra>",
     )
     apply_fig_theme(fig_vol, title="Daily price volatility by type")
 
     return fig_rolling, fig_vol
+
+
+@app.callback(
+    Output("trends-selected-week", "data"),
+    [
+        Input("rolling-chart", "clickData"),
+        Input("volatility-chart", "clickData"),
+    ],
+    prevent_initial_call=True,
+)
+def store_trends_selected_week(rolling_click, vol_click):
+    try:
+        trig_id = callback_context.triggered[0]["prop_id"].split(".")[0] if callback_context.triggered else None
+    except Exception:
+        trig_id = None
+    click_data = rolling_click if trig_id == "rolling-chart" else (vol_click if trig_id == "volatility-chart" else (rolling_click or vol_click))
+    if not click_data or not click_data.get("points"):
+        return None
+    point = click_data["points"][0]
+    clicked_raw = point.get("x")
+    if not clicked_raw:
+        return None
+    return str(clicked_raw)[:10]
+
+
+@app.callback(
+    Output("trends-drilldown-container", "children"),
+    [
+        Input("trends-selected-week", "data"),
+        Input("t-type-checklist", "value"),
+        Input("t-date-range", "start_date"),
+        Input("t-date-range", "end_date"),
+    ],
+)
+def update_trends_drilldown(selected_week, types, start_date, end_date):
+    if not selected_week:
+        return html.Div(
+            style={
+                "backgroundColor": COLORS["card"],
+                "border": f"1px dashed {COLORS['border']}",
+                "borderRadius": "16px",
+                "padding": "24px 28px",
+                "textAlign": "center",
+                "marginTop": "24px",
+            },
+            children=[
+                html.Div("👆", style={"fontSize": "26px", "marginBottom": "6px"}),
+                html.Div(
+                    "Interactive Weekly Market Breakdown",
+                    style={"color": COLORS["accent"], "fontWeight": "700", "fontSize": "16px", "marginBottom": "4px"},
+                ),
+                html.Div(
+                    "Click on any data point along the rolling price or volatility lines above to inspect a detailed market-by-market volume & price breakdown for that exact week.",
+                    style={"color": COLORS["muted"], "fontSize": "13px"},
+                ),
+            ],
+        )
+
+    date_str = str(selected_week)[:10]
+    try:
+        target_date = pd.to_datetime(date_str)
+    except Exception:
+        return html.Div("Invalid date.")
+
+    if (start_date and target_date < pd.to_datetime(start_date)) or (end_date and target_date > pd.to_datetime(end_date)):
+        return html.Div(
+            style={
+                "backgroundColor": COLORS["card"],
+                "border": f"1px dashed {COLORS['border']}",
+                "borderRadius": "16px",
+                "padding": "24px 28px",
+                "textAlign": "center",
+                "marginTop": "24px",
+            },
+            children=[
+                html.Div("📅", style={"fontSize": "26px", "marginBottom": "6px"}),
+                html.Div(
+                    f"Selected week ({date_str}) is outside current date filters",
+                    style={"color": COLORS["accent"], "fontWeight": "700", "fontSize": "16px", "marginBottom": "4px"},
+                ),
+                html.Div(
+                    "Widen your date filter range or click a data point on the chart above to inspect a new week.",
+                    style={"color": COLORS["muted"], "fontSize": "13px"},
+                ),
+            ],
+        )
+
+    week_df = df[df["date"] == target_date]
+    if types:
+        week_df = week_df[week_df["type"].isin(types)]
+
+    if week_df.empty:
+        return html.Div(
+            style={"padding": "20px", "textAlign": "center", "color": COLORS["muted"]},
+            children=f"No matching records found for the week of {date_str} with the current filter selection.",
+        )
+
+    date_formatted = target_date.strftime("%B %d, %Y")
+    total_vol = week_df["total_volume"].sum()
+    avg_price = week_df["average_price"].mean()
+    n_markets = week_df["region"].nunique()
+
+    # 1. Top 10 regions by volume
+    vol_by_reg = (
+        week_df.groupby("region")["total_volume"]
+        .sum()
+        .reset_index()
+        .sort_values("total_volume", ascending=False)
+        .head(10)
+        .sort_values("total_volume", ascending=True)
+    )
+    vol_by_reg["vol_formatted"] = vol_by_reg["total_volume"].map(format_number)
+
+    fig_bar_vol = px.bar(
+        vol_by_reg,
+        x="total_volume",
+        y="region",
+        orientation="h",
+        text="vol_formatted",
+        labels={"total_volume": "Total Volume", "region": "Market"},
+        color_discrete_sequence=[COLORS["accent"]],
+    )
+    fig_bar_vol.update_traces(
+        textposition="inside",
+        insidetextanchor="middle",
+        textfont=dict(color="#0E0E0E", size=12, family="'Quicksand', sans-serif"),
+        marker=dict(line=dict(width=1, color="#121212")),
+        hovertemplate="<b>%{y}</b><br>Volume: %{x:,.0f} units (%{text})<extra></extra>",
+    )
+    apply_fig_theme(fig_bar_vol, title="Top 10 Markets by Volume")
+    fig_bar_vol.update_layout(
+        height=360,
+        margin=dict(l=10, r=20, t=50, b=30),
+        xaxis_title="",
+        yaxis_title="",
+    )
+
+    # 2. Top 10 regions by average price
+    price_by_reg = (
+        week_df.groupby("region")["average_price"]
+        .mean()
+        .reset_index()
+        .sort_values("average_price", ascending=False)
+        .head(10)
+        .sort_values("average_price", ascending=True)
+    )
+    price_by_reg["price_formatted"] = price_by_reg["average_price"].map(lambda p: f"${p:.2f}")
+
+    fig_bar_price = px.bar(
+        price_by_reg,
+        x="average_price",
+        y="region",
+        orientation="h",
+        text="price_formatted",
+        labels={"average_price": "Average Price", "region": "Market"},
+        color_discrete_sequence=["#D4A373"],
+    )
+    fig_bar_price.update_traces(
+        textposition="inside",
+        insidetextanchor="middle",
+        textfont=dict(color="#0E0E0E", size=12, family="'Quicksand', sans-serif"),
+        marker=dict(line=dict(width=1, color="#121212")),
+        hovertemplate="<b>%{y}</b><br>Avg Price: $%{x:.2f}<extra></extra>",
+    )
+    apply_fig_theme(fig_bar_price, title="Top 10 Markets by Average Price")
+    fig_bar_price.update_layout(
+        height=360,
+        margin=dict(l=10, r=20, t=50, b=30),
+        xaxis_title="",
+        yaxis_title="",
+    )
+
+    top_vol_reg = vol_by_reg.iloc[-1]["region"]
+    top_price_reg = price_by_reg.iloc[-1]["region"]
+
+    return html.Div(
+        style={
+            "backgroundColor": COLORS["card"],
+            "borderRadius": "18px",
+            "border": f"1px solid {COLORS['accent']}",
+            "padding": "24px",
+            "marginTop": "24px",
+            "boxShadow": "0 8px 30px rgba(0,0,0,0.35)",
+        },
+        children=[
+            html.Div(
+                style={
+                    "display": "flex",
+                    "justifyContent": "space-between",
+                    "alignItems": "flex-start",
+                    "flexWrap": "wrap",
+                    "gap": "12px",
+                    "marginBottom": "18px",
+                    "borderBottom": f"1px solid {COLORS['border']}",
+                    "paddingBottom": "14px",
+                },
+                children=[
+                    html.Div(
+                        children=[
+                            html.Div(
+                                style={"display": "flex", "alignItems": "center", "gap": "8px"},
+                                children=[
+                                    html.Span("📅", style={"fontSize": "20px"}),
+                                    html.H3(
+                                        "Weekly Market Breakdown",
+                                        style={
+                                            "color": COLORS["accent"],
+                                            "margin": 0,
+                                            "fontWeight": "800",
+                                            "fontSize": "19px",
+                                        },
+                                    ),
+                                    html.Span(f"● Week of {date_formatted}", className="status-badge", style={"fontSize": "11px", "padding": "3px 10px"}),
+                                ],
+                            ),
+                            html.P(
+                                f"Regional price and volume distributions across {n_markets} reporting markets for sales commencing {date_formatted}.",
+                                style={"color": COLORS["muted"], "margin": "4px 0 0 0", "fontSize": "12.5px"},
+                            ),
+                        ],
+                    ),
+                    html.Span(
+                        "💡 Click any other date point above to change the breakdown week",
+                        style={
+                            "color": COLORS["muted"],
+                            "fontSize": "11.5px",
+                            "fontStyle": "italic",
+                            "alignSelf": "center",
+                        },
+                    ),
+                ],
+            ),
+            html.Div(
+                style={
+                    "display": "flex",
+                    "flexWrap": "wrap",
+                    "gap": "14px",
+                    "marginBottom": "20px",
+                },
+                children=[
+                    html.Div(
+                        style={
+                            "backgroundColor": "rgba(255,255,255,0.03)",
+                            "border": f"1px solid {COLORS['border']}",
+                            "borderRadius": "12px",
+                            "padding": "10px 16px",
+                            "flex": "1 1 160px",
+                        },
+                        children=[
+                            html.Div("TOTAL WEEKLY VOLUME", style={"color": COLORS["muted"], "fontSize": "10px", "fontWeight": "700"}),
+                            html.Div(f"{format_number(total_vol)} units", style={"color": COLORS["text"], "fontSize": "18px", "fontWeight": "700", "marginTop": "2px"}),
+                        ],
+                    ),
+                    html.Div(
+                        style={
+                            "backgroundColor": "rgba(255,255,255,0.03)",
+                            "border": f"1px solid {COLORS['border']}",
+                            "borderRadius": "12px",
+                            "padding": "10px 16px",
+                            "flex": "1 1 160px",
+                        },
+                        children=[
+                            html.Div("NATIONAL AVERAGE PRICE", style={"color": COLORS["muted"], "fontSize": "10px", "fontWeight": "700"}),
+                            html.Div(f"${avg_price:.2f}", style={"color": COLORS["accent"], "fontSize": "18px", "fontWeight": "700", "marginTop": "2px"}),
+                        ],
+                    ),
+                    html.Div(
+                        style={
+                            "backgroundColor": "rgba(255,255,255,0.03)",
+                            "border": f"1px solid {COLORS['border']}",
+                            "borderRadius": "12px",
+                            "padding": "10px 16px",
+                            "flex": "1 1 160px",
+                        },
+                        children=[
+                            html.Div("TOP VOLUME MARKET", style={"color": COLORS["muted"], "fontSize": "10px", "fontWeight": "700"}),
+                            html.Div(top_vol_reg, style={"color": COLORS["text"], "fontSize": "16px", "fontWeight": "700", "marginTop": "2px"}),
+                        ],
+                    ),
+                    html.Div(
+                        style={
+                            "backgroundColor": "rgba(255,255,255,0.03)",
+                            "border": f"1px solid {COLORS['border']}",
+                            "borderRadius": "12px",
+                            "padding": "10px 16px",
+                            "flex": "1 1 160px",
+                        },
+                        children=[
+                            html.Div("HIGHEST PRICED MARKET", style={"color": COLORS["muted"], "fontSize": "10px", "fontWeight": "700"}),
+                            html.Div(top_price_reg, style={"color": COLORS["text"], "fontSize": "16px", "fontWeight": "700", "marginTop": "2px"}),
+                        ],
+                    ),
+                ],
+            ),
+            html.Div(
+                style={
+                    "display": "flex",
+                    "flexWrap": "wrap",
+                    "gap": "20px",
+                },
+                children=[
+                    html.Div(
+                        style={"flex": "1 1 450px"},
+                        children=[
+                            drilldown_badge(f"● Week of {date_formatted}"),
+                            dcc.Graph(figure=fig_bar_vol, config={"displayModeBar": False}),
+                        ],
+                    ),
+                    html.Div(
+                        style={"flex": "1 1 450px"},
+                        children=[
+                            drilldown_badge(f"● Week of {date_formatted}"),
+                            dcc.Graph(figure=fig_bar_price, config={"displayModeBar": False}),
+                        ],
+                    ),
+                ],
+            ),
+        ],
+    )
 
 
 @app.callback(
@@ -1306,20 +1997,22 @@ def update_comparison(region1, region2, comp_type, start_date, end_date):
         go.Scatter(
             x=dff1_agg["date"],
             y=dff1_agg["average_price"],
-            mode="lines",
+            mode="lines+markers",
+            marker=dict(size=4),
             name=region1,
             line=dict(color=AVOCADO_COLORS[0], width=2.5),
-            hovertemplate=f"<b>{region1}</b>: $%{{y:.2f}}<extra></extra>",
+            hovertemplate=f"<b>{region1}</b>: $%{{y:.2f}}<br><span style='font-size:11px;color:#7AC74F'>👆 Click to inspect week</span><extra></extra>",
         )
     )
     fig_price.add_trace(
         go.Scatter(
             x=dff2_agg["date"],
             y=dff2_agg["average_price"],
-            mode="lines",
+            mode="lines+markers",
+            marker=dict(size=4),
             name=region2,
             line=dict(color=AVOCADO_COLORS[1], width=2.5),
-            hovertemplate=f"<b>{region2}</b>: $%{{y:.2f}}<extra></extra>",
+            hovertemplate=f"<b>{region2}</b>: $%{{y:.2f}}<br><span style='font-size:11px;color:#7AC74F'>👆 Click to inspect week</span><extra></extra>",
         )
     )
     apply_fig_theme(fig_price, title=f"Average price comparison ({type_label})")
@@ -1330,20 +2023,22 @@ def update_comparison(region1, region2, comp_type, start_date, end_date):
         go.Scatter(
             x=dff1_agg["date"],
             y=dff1_agg["total_volume"],
-            mode="lines",
+            mode="lines+markers",
+            marker=dict(size=4),
             name=region1,
             line=dict(color=AVOCADO_COLORS[0], width=2.5),
-            hovertemplate=f"<b>{region1}</b>: %{{y:,.0f}} units<extra></extra>",
+            hovertemplate=f"<b>{region1}</b>: %{{y:,.0f}} units<br><span style='font-size:11px;color:#7AC74F'>👆 Click to inspect week</span><extra></extra>",
         )
     )
     fig_volume.add_trace(
         go.Scatter(
             x=dff2_agg["date"],
             y=dff2_agg["total_volume"],
-            mode="lines",
+            mode="lines+markers",
+            marker=dict(size=4),
             name=region2,
             line=dict(color=AVOCADO_COLORS[1], width=2.5),
-            hovertemplate=f"<b>{region2}</b>: %{{y:,.0f}} units<extra></extra>",
+            hovertemplate=f"<b>{region2}</b>: %{{y:,.0f}} units<br><span style='font-size:11px;color:#7AC74F'>👆 Click to inspect week</span><extra></extra>",
         )
     )
     apply_fig_theme(fig_volume, title=f"Total volume comparison ({type_label})")
@@ -1408,6 +2103,246 @@ def update_comparison(region1, region2, comp_type, start_date, end_date):
     ]
 
     return fig_price, fig_volume, kpis
+
+
+@app.callback(
+    Output("comp-selected-week", "data"),
+    [
+        Input("comp-price-chart", "clickData"),
+        Input("comp-volume-chart", "clickData"),
+    ],
+    prevent_initial_call=True,
+)
+def store_comp_selected_week(price_click, vol_click):
+    try:
+        trig_id = callback_context.triggered[0]["prop_id"].split(".")[0] if callback_context.triggered else None
+    except Exception:
+        trig_id = None
+    click_data = price_click if trig_id == "comp-price-chart" else (vol_click if trig_id == "comp-volume-chart" else (price_click or vol_click))
+    if not click_data or not click_data.get("points"):
+        return None
+    point = click_data["points"][0]
+    clicked_raw = point.get("x")
+    if not clicked_raw:
+        return None
+    return str(clicked_raw)[:10]
+
+
+@app.callback(
+    Output("comp-drilldown-container", "children"),
+    [
+        Input("comp-selected-week", "data"),
+        Input("comp-region-1", "value"),
+        Input("comp-region-2", "value"),
+        Input("comp-type", "value"),
+        Input("comp-date-range", "start_date"),
+        Input("comp-date-range", "end_date"),
+    ],
+)
+def update_comp_drilldown(selected_week, region1, region2, comp_type, start_date, end_date):
+    if not region1 or not region2:
+        return html.Div()
+
+    if not selected_week:
+        return html.Div(
+            style={
+                "backgroundColor": COLORS["card"],
+                "border": f"1px dashed {COLORS['border']}",
+                "borderRadius": "16px",
+                "padding": "24px 28px",
+                "textAlign": "center",
+                "marginTop": "24px",
+            },
+            children=[
+                html.Div("👆", style={"fontSize": "26px", "marginBottom": "6px"}),
+                html.Div(
+                    "Interactive Head-to-Head Weekly Drilldown",
+                    style={"color": COLORS["accent"], "fontWeight": "700", "fontSize": "16px", "marginBottom": "4px"},
+                ),
+                html.Div(
+                    f"Click any point on the price or volume charts above to view a direct side-by-side bar comparison between {region1} and {region2} for that specific week.",
+                    style={"color": COLORS["muted"], "fontSize": "13px"},
+                ),
+            ],
+        )
+
+    date_str = str(selected_week)[:10]
+    try:
+        target_date = pd.to_datetime(date_str)
+    except Exception:
+        return html.Div()
+
+    if (start_date and target_date < pd.to_datetime(start_date)) or (end_date and target_date > pd.to_datetime(end_date)):
+        return html.Div(
+            style={
+                "backgroundColor": COLORS["card"],
+                "border": f"1px dashed {COLORS['border']}",
+                "borderRadius": "16px",
+                "padding": "24px 28px",
+                "textAlign": "center",
+                "marginTop": "24px",
+            },
+            children=[
+                html.Div("📅", style={"fontSize": "26px", "marginBottom": "6px"}),
+                html.Div(
+                    f"Selected week ({date_str}) is outside current date filters",
+                    style={"color": COLORS["accent"], "fontWeight": "700", "fontSize": "16px", "marginBottom": "4px"},
+                ),
+                html.Div(
+                    "Widen your date filter range or click a data point on the chart above to inspect a new week.",
+                    style={"color": COLORS["muted"], "fontSize": "13px"},
+                ),
+            ],
+        )
+
+    date_formatted = target_date.strftime("%B %d, %Y")
+
+    mask = (df["date"] == target_date) & (df["region"].isin([region1, region2]))
+    if comp_type and comp_type != "all":
+        mask &= (df["type"] == comp_type)
+        type_str = comp_type.title()
+    else:
+        type_str = "All Types Combined"
+
+    week_sub = df[mask]
+    if week_sub.empty:
+        return html.Div(
+            style={"padding": "20px", "textAlign": "center", "color": COLORS["muted"]},
+            children=f"No matching records for week of {date_str} with current filter selection.",
+        )
+
+    agg = week_sub.groupby("region").agg(
+        avg_price=("average_price", "mean"),
+        total_volume=("total_volume", "sum"),
+    ).reset_index()
+
+    r1_data = agg[agg["region"] == region1]
+    r2_data = agg[agg["region"] == region2]
+
+    p1 = r1_data["avg_price"].iloc[0] if not r1_data.empty else 0
+    p2 = r2_data["avg_price"].iloc[0] if not r2_data.empty else 0
+    v1 = r1_data["total_volume"].iloc[0] if not r1_data.empty else 0
+    v2 = r2_data["total_volume"].iloc[0] if not r2_data.empty else 0
+
+    p_diff = p1 - p2
+    v_diff = v1 - v2
+
+    # Head-to-head bar for price
+    fig_bar_price = px.bar(
+        agg,
+        x="region",
+        y="avg_price",
+        text=agg["avg_price"].map(lambda p: f"${p:.2f}"),
+        color="region",
+        color_discrete_sequence=[AVOCADO_COLORS[0], AVOCADO_COLORS[1]],
+        labels={"avg_price": "Average Price", "region": "Region"},
+    )
+    fig_bar_price.update_traces(
+        textposition="inside",
+        insidetextanchor="middle",
+        textfont=dict(color="#0E0E0E", size=13, family="'Quicksand', sans-serif"),
+        marker=dict(line=dict(width=1, color="#121212")),
+        hovertemplate="<b>%{x}</b>: $%{y:.2f}<extra></extra>",
+    )
+    apply_fig_theme(fig_bar_price, title=f"Average Price: {region1} vs {region2}")
+    fig_bar_price.update_layout(height=320, showlegend=False, xaxis_title="", yaxis_title="")
+
+    # Head-to-head bar for volume
+    fig_bar_vol = px.bar(
+        agg,
+        x="region",
+        y="total_volume",
+        text=agg["total_volume"].map(format_number),
+        color="region",
+        color_discrete_sequence=[AVOCADO_COLORS[0], AVOCADO_COLORS[1]],
+        labels={"total_volume": "Total Volume", "region": "Region"},
+    )
+    fig_bar_vol.update_traces(
+        textposition="inside",
+        insidetextanchor="middle",
+        textfont=dict(color="#0E0E0E", size=13, family="'Quicksand', sans-serif"),
+        marker=dict(line=dict(width=1, color="#121212")),
+        hovertemplate="<b>%{x}</b>: %{y:,.0f} units (%{text})<extra></extra>",
+    )
+    apply_fig_theme(fig_bar_vol, title=f"Total Volume: {region1} vs {region2}")
+    fig_bar_vol.update_layout(height=320, showlegend=False, xaxis_title="", yaxis_title="")
+
+    return html.Div(
+        style={
+            "backgroundColor": COLORS["card"],
+            "borderRadius": "18px",
+            "border": f"1px solid {COLORS['accent']}",
+            "padding": "24px",
+            "marginTop": "24px",
+            "boxShadow": "0 8px 30px rgba(0,0,0,0.35)",
+        },
+        children=[
+            html.Div(
+                style={
+                    "display": "flex",
+                    "justifyContent": "space-between",
+                    "alignItems": "center",
+                    "flexWrap": "wrap",
+                    "gap": "12px",
+                    "marginBottom": "16px",
+                    "borderBottom": f"1px solid {COLORS['border']}",
+                    "paddingBottom": "12px",
+                },
+                children=[
+                    html.Div(
+                        style={"display": "flex", "alignItems": "center", "gap": "8px"},
+                        children=[
+                            html.Span("⚔️", style={"fontSize": "20px"}),
+                            html.H3(
+                                f"Head-to-Head Weekly Breakdown ({type_str})",
+                                style={"color": COLORS["accent"], "margin": 0, "fontWeight": "800", "fontSize": "18px"},
+                            ),
+                            html.Span(f"● Week of {date_formatted}", className="status-badge", style={"fontSize": "11px", "padding": "3px 10px"}),
+                        ],
+                    ),
+                    html.Span("Click any other date on the charts above to switch weeks", style={"color": COLORS["muted"], "fontSize": "11.5px", "fontStyle": "italic"}),
+                ],
+            ),
+            html.Div(
+                style={"display": "flex", "gap": "16px", "flexWrap": "wrap", "marginBottom": "20px"},
+                children=[
+                    html.Div(
+                        style={"backgroundColor": "rgba(255,255,255,0.03)", "border": f"1px solid {COLORS['border']}", "borderRadius": "12px", "padding": "10px 16px", "flex": "1 1 180px"},
+                        children=[
+                            html.Div("PRICE SPREAD (REG 1 − REG 2)", style={"color": COLORS["muted"], "fontSize": "10px", "fontWeight": "700"}),
+                            html.Div(f"{'+' if p_diff > 0 else ''}${p_diff:.2f}", style={"color": COLORS["accent"] if p_diff >= 0 else "#FF6B6B", "fontSize": "18px", "fontWeight": "700", "marginTop": "2px"}),
+                        ],
+                    ),
+                    html.Div(
+                        style={"backgroundColor": "rgba(255,255,255,0.03)", "border": f"1px solid {COLORS['border']}", "borderRadius": "12px", "padding": "10px 16px", "flex": "1 1 180px"},
+                        children=[
+                            html.Div("VOLUME SPREAD (REG 1 − REG 2)", style={"color": COLORS["muted"], "fontSize": "10px", "fontWeight": "700"}),
+                            html.Div(f"{'+' if v_diff > 0 else ''}{format_number(v_diff)} units", style={"color": COLORS["accent"] if v_diff >= 0 else "#FF6B6B", "fontSize": "18px", "fontWeight": "700", "marginTop": "2px"}),
+                        ],
+                    ),
+                ],
+            ),
+            html.Div(
+                style={"display": "flex", "flexWrap": "wrap", "gap": "20px"},
+                children=[
+                    html.Div(
+                        style={"flex": "1 1 420px"},
+                        children=[
+                            drilldown_badge(f"● Week of {date_formatted}"),
+                            dcc.Graph(figure=fig_bar_price, config={"displayModeBar": False}),
+                        ],
+                    ),
+                    html.Div(
+                        style={"flex": "1 1 420px"},
+                        children=[
+                            drilldown_badge(f"● Week of {date_formatted}"),
+                            dcc.Graph(figure=fig_bar_vol, config={"displayModeBar": False}),
+                        ],
+                    ),
+                ],
+            ),
+        ],
+    )
 
 
 @app.callback(
